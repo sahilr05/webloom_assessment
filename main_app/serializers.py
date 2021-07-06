@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from .models import Domain
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -15,7 +16,8 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Domain  
-        fields = ('domain_name', 'org', 'country', 'user', 'status')
+        model = Domain
+        fields = ("domain_name", "org", "country", "user", "status")
