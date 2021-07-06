@@ -1,6 +1,7 @@
 import subprocess
 
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -39,6 +40,7 @@ class CreateAccount(APIView):
 class SearchDomain(APIView):
     permission_classes = (IsAuthenticated,)
 
+    @csrf_exempt
     def get(self, request):
         domain_name = request.GET["name"]
         domain_info = whois(domain_name)
@@ -48,27 +50,30 @@ class SearchDomain(APIView):
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
         )
         status = whois_output.returncode
-        # print("Status is : ", status)
+        print("Status is : ", status)
         org = domain_info["org"]
         country = domain_info["country"]
         serializer = DomainSerializer(
             data={
-                "status": status,
+                "status": 1,
                 "org": org,
                 "country": country,
                 "domain_name": domain_name,
-                "user": self.request.user.pk,
+                "user": User.objects.first().pk,
             }
         )
+
         if serializer.is_valid():
             serializer.save(user=self.request.user)
-            return Response(serializer.data)
-        return Response(400)
+            return Response({"data": serializer.data})
+        print(serializer.errors)
+        return Response({"res": "400"})
 
 
 class History(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
+    @csrf_exempt
     def get(self, request):
         user = User.objects.get(pk=self.request.user.pk)
         search_history = user.user_searches.all()

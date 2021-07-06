@@ -51,7 +51,10 @@ except ImportError:
     generate_secret_key(os.path.join(BASE_DIR, "secret_key.py"))
     from secret_key import SECRET_KEY  # noqa
 
-ALLOWED_HOSTS = []
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = ("http://127.0.0.1:3000",)
+
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -69,6 +72,7 @@ INSTALLED_APPS = [
     # swagger ui to view all available APIs
     "rest_framework_swagger",
     "drf_yasg",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -79,6 +83,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = "domain_search.urls"
