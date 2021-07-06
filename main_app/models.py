@@ -8,7 +8,7 @@ class Domain(models.Model):
     domain = models.CharField(max_length=50)
     org = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
-    # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_searches")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_searches")
     date_updated = models.DateTimeField(default=timezone.now)
     date_created = models.DateTimeField(default=timezone.now)
 

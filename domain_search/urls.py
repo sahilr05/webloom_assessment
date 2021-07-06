@@ -23,9 +23,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("main_app.urls"), name="main_app"),
     path("login/", obtain_auth_token, name="api_token_auth"),
-    # path(
-    #     "register/", main_app.views.CreateAccount.as_view(), name="create_account"
-    # ),  # noqa
+    path(
+        "register/", main_app.views.CreateAccount.as_view(), name="create_account"
+    ),  # noqa
     # swagger ui
     path(
         "swagger-ui/",
