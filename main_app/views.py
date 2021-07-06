@@ -42,5 +42,11 @@ class CheckDomain(APIView):
         domain_name = request.GET["name"]
         domain_details = whois(domain_name)
 
-        serializer = DomainSerializer(domain_details)
-        return Response(serializer.data)
+        org = domain_details['org']
+        country = domain_details['country']
+        serializer = DomainSerializer(data={'org':org, 'country': country, 'domain_name': domain_name, 'user': self.request.user.pk})
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

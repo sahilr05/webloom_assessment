@@ -16,11 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class DomainSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-
-    def get_name(self, obj):
-        return obj.domain_name[1]
-
     class Meta:
-        model = Domain
-        fields = ('name', 'org', 'country')
+        model = Domain  
+        fields = ('domain_name', 'org', 'country', 'user')
