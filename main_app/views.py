@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from .models import Domain
 from .serializers import DomainSerializer
 from whois import whois
-
+import subprocess
 
 class CreateAccount(APIView):
     def post(self, request):
@@ -40,13 +40,16 @@ class CheckDomain(APIView):
 
     def get(self, request):
         domain_name = request.GET["name"]
-        domain_details = whois(domain_name)
-
-        org = domain_details['org']
-        country = domain_details['country']
-        serializer = DomainSerializer(data={'org':org, 'country': country, 'domain_name': domain_name, 'user': self.request.user.pk})
+        domain_info = whois(domain_name)
+        command = "whois {}".format(domain_name)
+        # print("Command is : ", command)
+        whois_output = subprocess.run(command , stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        status = whois_output.returncode
+        # print("Status is : ", status)
+        org = domain_info['org']
+        country = domain_info['country']
+        serializer = DomainSerializer(data={'status':status ,'org':org, 'country': country, 'domain_name': domain_name, 'user': self.request.user.pk})
         if serializer.is_valid():
             serializer.save(user=self.request.user)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

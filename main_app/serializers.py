@@ -18,4 +18,4 @@ class UserSerializer(serializers.ModelSerializer):
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain  
-        fields = ('domain_name', 'org', 'country', 'user')
+        fields = ('domain_name', 'org', 'country', 'user', 'status')
