@@ -70,6 +70,8 @@ export default function App() {
   }
 
   const showSearches = async () => {
+    if (authToken) {
+      
     var res = []
       res = await axios({
           method: "get",
@@ -84,6 +86,10 @@ export default function App() {
         });
         console.log(res)
         setSearchHistory(res)
+    }
+    else {
+      window.alert(`Login required`)
+    }
     };
 
   const onSearchClick = (val) => {
@@ -102,12 +108,6 @@ export default function App() {
       .catch(function (response) {
           console.log('Error: ', response);
       });
-  };
-
-  const handleChange = (event) => {
-    // event.preventDefault()
-    console.log(event.target.value)
-    setSearchQuery(event.target.value)
   };
 
   const onFormSubmit = async(data) => {
@@ -139,7 +139,7 @@ export default function App() {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <Typography component="h1" variant="h4">
+            <Typography align="center" component="h1" variant="h4">
                 Sign in
             </Typography>
             <div className={classes.paper}>
@@ -190,23 +190,22 @@ export default function App() {
 
         <Grid
             container
-            wrap='nowrap'
-            justifyContent="space-between"
-            direction="row"
+            // wrap='nowrap'
+            justifyContent="center"
+            direction="column"
             alignItems="center"
+            spacing={3}
           >
-            <Grid item xs={6}>
-              <Typography variant="h6">Search Domain</Typography>
-            </Grid>
-            <Grid item xs={3}>
-            <Button p={5} onClick={showSearches} variant="contained" color="primary">
-            Show Search History
+            <Grid item xs={12} md={8} lg={6}>
+              <Button m={2} py={2} onClick={showSearches} variant="contained" color="primary">
+              Show Search History
               </Button>
             </Grid>
           </Grid>
           <SearchBar
+          py={2}
             autoFocus
-            key="editor"
+            placeholder="Search any domain"
             value={searchQuery}
             onChange={(value)=>setSearchQuery(value)}
             onRequestSearch={onSearchClick}
@@ -216,6 +215,7 @@ export default function App() {
             }}
           />
           {Object.keys(responseData).length ? <ShowResult data={responseData}/>: null} 
+          {/* </Grid> */}
         </Container>
         )
       }
