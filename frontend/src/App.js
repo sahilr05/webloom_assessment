@@ -1,5 +1,6 @@
 // import './App.css';
-import React from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import SearchBar from "material-ui-search-bar";
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,28 +10,43 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import HistoryList from './ShowHistory';
+import TextField from '@material-ui/core/TextField';
+import { TextareaAutosize } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   cardstyle:{
-        // marginTop: theme.spacing(20),
-        margin:'auto',
-        flexDirection: 'column',
-    },
+      // marginTop: theme.spacing(20),
+    margin:'auto',
+    flexDirection: 'column',
+  },
+  paper: {
+    marginTop: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
 }));
 
 export default function App() {
 
   const [responseData, setResponseData] = React.useState({})
   const [searchQuery, setSearchQuery] = React.useState('')
-  // const [searchHistory, setSearchHistory] = React.useState({})
+  const [authenticated, setAuthenticated] = useState(false)
+  const [searchHistory, setSearchHistory] = React.useState({})
+  const { register, handleSubmit, setValue } = useForm()
+  const [authToken, setAuthToken] = React.useState('')
+
 
   const ShowResult = (data) => {
-    console.log(data.data.data.data)
     const classes = useStyles();
     const response_data = data.data.data.data
 
     return (
-      <>
+      
       <Grid
             xs={12} md={4} lg={12}
             container
@@ -49,7 +65,7 @@ export default function App() {
               </CardContent>
             </Card>
       </Grid>
-      </>
+
     )
   }
 
@@ -59,7 +75,7 @@ export default function App() {
           method: "get",
           url: `http://127.0.0.1:8000/api/history/`,
           headers: {
-            'Authorization': 'Token e3155517c6d39a5e3825196c20f328b1dcaf2c04',
+            'Authorization': `Token ${authToken}` ,
           },
         })
         .then((response) => response)
@@ -67,16 +83,18 @@ export default function App() {
             console.log('Error: ', response);
         });
         console.log(res)
+        setSearchHistory(res)
     };
 
   const onSearchClick = (val) => {
+    console.log(authToken)
     setSearchQuery(val)
 
     axios({
       method: "get",
       url: `http://127.0.0.1:8000/api/search/?name=${searchQuery}`,
       headers: {
-        'Authorization': 'Token e3155517c6d39a5e3825196c20f328b1dcaf2c04',
+        'Authorization': `Token ${authToken}` ,
         "Content-Type": 'application/json'
       },
   })
@@ -86,22 +104,94 @@ export default function App() {
       });
   };
 
-  const handleChange = (val) => {
-    setSearchQuery(val)
+  const handleChange = (event) => {
+    // event.preventDefault()
+    console.log(event.target.value)
+    setSearchQuery(event.target.value)
   };
 
+  const onFormSubmit = async(data) => {
+    console.log(data)
+    let authOutput = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8000/login/`,
+      headers: {
+        "Content-Type": 'application/json', 
+      },
+      data: data
+  })
+      .then((response) => response.data.token)
+      .catch(function (response) {
+          console.log('Error: ', response);
+      });
+      console.log(authOutput)
+      if (authOutput){
+        setAuthenticated(true)
+        setAuthToken(authOutput)
+      }
+  };
+  
 
-  return (
+
+  function SignIn() {
+    const classes = useStyles();
+
+    return (
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Typography component="h1" variant="h4">
+                Sign in
+            </Typography>
+            <div className={classes.paper}>
+                <form className={classes.form} onSubmit={handleSubmit(onFormSubmit)} noValidate>
+                    <TextField
+                        variant="outlined"form
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="username"
+                        name="username"
+                        inputRef={register}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        inputRef={register}
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                    >
+                        Sign In
+                    </Button>
+                </form>
+            </div>
+        </Container>
+    );
+  }
+
+  const MainWindow = () => { 
+    return (
     <div className="App">
-      {Object.keys(responseData).length ? (
-        <ShowResult data={responseData}/>
+      {Object.keys(searchHistory).length ? (
+        <HistoryList rows={searchHistory.data}/>
         ):(
         <Container>
 
         <Grid
             container
             wrap='nowrap'
-            justify="space-between"
+            justifyContent="space-between"
             direction="row"
             alignItems="center"
           >
@@ -115,19 +205,24 @@ export default function App() {
             </Grid>
           </Grid>
           <SearchBar
+            autoFocus
+            key="editor"
             value={searchQuery}
-            onChange={(value) => handleChange(value) }
+            onChange={(value)=>setSearchQuery(value)}
             onRequestSearch={onSearchClick}
             style={{
               margin: "0 auto",
               maxWidth: 800
             }}
           />
+          {Object.keys(responseData).length ? <ShowResult data={responseData}/>: null} 
         </Container>
         )
       }
     </div>
   );
+}
 
-
+  const finalValue = authenticated ? <MainWindow  />: <SignIn />
+  return finalValue
 }

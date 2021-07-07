@@ -50,16 +50,16 @@ class SearchDomain(APIView):
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
         )
         status = whois_output.returncode
-        print("Status is : ", status)
+        # print("Status is : ", status)
         org = domain_info["org"]
         country = domain_info["country"]
         serializer = DomainSerializer(
             data={
-                "status": 1,
+                "status": status,
                 "org": org,
                 "country": country,
                 "domain_name": domain_name,
-                "user": User.objects.first().pk,
+                "user": self.request.user.pk,
             }
         )
 
