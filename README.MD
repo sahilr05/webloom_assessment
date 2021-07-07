@@ -15,3 +15,16 @@ Download Postman API collection from [here](https://drive.google.com/file/d/1YYc
 * Login
 * Search Domain
 * View Search History
+
+## Starting up
+
+* Move to backend directory and run the following command to install dependencis and start backend server
+```
+pip install -r requirements.txt
+python manage.py runserver
+```
+* Move to frontend directory and run the following command to install dependencies and start frontend server
+```
+npm install
+npm start
+```
