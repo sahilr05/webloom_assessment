@@ -1,6 +1,7 @@
 import os
 from distutils.util import strtobool
 
+from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.utils import get_random_secret_key
 
@@ -36,7 +37,7 @@ def get_env_variable(var_name):
 
 DEBUG = get_bool_from_env("DEBUG", True)
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def generate_secret_key(filename):
@@ -116,7 +117,7 @@ WSGI_APPLICATION = "domain_search.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR + "/" + "db.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
