@@ -46,7 +46,7 @@ export default function App() {
     const response_data = data.data.data.data
 
     return (
-      
+
       <Grid
             xs={12} md={4} lg={12}
             container
@@ -71,7 +71,7 @@ export default function App() {
 
   const showSearches = async () => {
     if (authToken) {
-      
+
     var res = []
       res = await axios({
           method: "get",
@@ -116,7 +116,7 @@ export default function App() {
       method: "post",
       url: `http://127.0.0.1:8000/login/`,
       headers: {
-        "Content-Type": 'application/json', 
+        "Content-Type": 'application/json',
       },
       data: data
   })
@@ -130,7 +130,7 @@ export default function App() {
         setAuthToken(authOutput)
       }
   };
-  
+
 
 
   function SignIn() {
@@ -180,7 +180,7 @@ export default function App() {
     );
   }
 
-  const MainWindow = () => { 
+  const MainWindow = () => {
     return (
     <div className="App">
       {Object.keys(searchHistory).length ? (
@@ -214,7 +214,7 @@ export default function App() {
               maxWidth: 800
             }}
           />
-          {Object.keys(responseData).length ? <ShowResult data={responseData}/>: null} 
+          {Object.keys(responseData).length ? <ShowResult data={responseData}/>: null}
           {/* </Grid> */}
         </Container>
         )

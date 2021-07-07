@@ -1,4 +1,4 @@
-# Domain finder 
+# Domain finder
 
 (built as a part of webloominc assessment)
 
