@@ -45,7 +45,6 @@ class SearchDomain(APIView):
         domain_name = request.GET["name"]
         domain_info = whois(domain_name)
         command = "whois {}".format(domain_name)
-        # print("Command is : ", command)
         whois_output = subprocess.run(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
         )
@@ -71,7 +70,7 @@ class SearchDomain(APIView):
 
 
 class History(APIView):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     @csrf_exempt
     def get(self, request):
